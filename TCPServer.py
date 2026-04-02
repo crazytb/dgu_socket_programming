@@ -6,16 +6,16 @@ serverSocket.listen(1)
 print('The server is ready to receive')
 # 외부 while True: 새 클라이언트 연결 대기
 while True:
-    connectionSocket, addr = serverSocket.accept()
-    print(f'Connected from {addr[0]}:{addr[1]}')
+    connectionSocket, clientAddress = serverSocket.accept()
+    print(f'Connected from {clientAddress[0]}:{clientAddress[1]}')
     # 내부 while True: 같은 클라이언트로부터 메시지 계속 수신
     # recv()가 빈 문자열 반환 시(Ctrl+C 등으로 클라이언트 종료) 루프 탈출 후 소켓 닫음
     while True:
-        sentence = connectionSocket.recv(1024).decode()
-        if not sentence:  # 클라이언트가 연결을 종료하면 빈 문자열 반환
+        message = connectionSocket.recv(1024)
+        if not message:  # 클라이언트가 연결을 종료하면 빈 문자열 반환
             break
-        capitalizedSentence = sentence.upper()
-        print(f'Received from {addr[0]}:{addr[1]} -> {capitalizedSentence}')
-        connectionSocket.send(capitalizedSentence.encode())
+        modifiedMessage = message.decode().upper()
+        print(f'Received from {clientAddress[0]}:{clientAddress[1]} -> {modifiedMessage}')
+        connectionSocket.send(modifiedMessage.encode())
     connectionSocket.close()
-    print(f'Connection closed from {addr[0]}:{addr[1]}')
+    print(f'Connection closed from {clientAddress[0]}:{clientAddress[1]}')
